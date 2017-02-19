@@ -10,6 +10,9 @@ case $running in
   ;;
 *)
   echo "running new container..."
-  docker run -d -p 8888:8888 --name jupyter-notebook -v $(pwd):/home/jovyan/work jupyter/all-spark-notebook start-notebook.sh
+  # build docker image (piping Dockerfile to avoid creation of docker context)
+  docker build -t jupyter/py-extras - < docker/jupyter_py-extras/Dockerfile
+  docker run -d -p 8888:8888 --name jupyter-notebook --link mongo:mongo -v $(pwd):/home/jovyan/work jupyter/py-extras start-notebook.sh
   ;;
 esac
+
